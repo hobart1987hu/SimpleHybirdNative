@@ -1,14 +1,10 @@
-package org.hobart.hybirdnative.widget;
+package org.hobart.hybirdnative;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
-
-import org.hobart.hybirdnative.R;
-import org.hobart.hybirdnative.SWebChromeClient;
-import org.hobart.hybirdnative.SWebViewDelegate;
 
 /**
  * Created by huzeyin on 2018/5/14.

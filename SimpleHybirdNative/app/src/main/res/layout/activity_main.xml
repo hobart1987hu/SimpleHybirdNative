@@ -4,7 +4,20 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <Button
+        android:id="@+id/btnLoadingDefault"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="使用默认的loading加载webView" />
+
+
+    <Button
+        android:id="@+id/btnLoadingCustom"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="使用自定义的loading加载webView" />
+
+    <FrameLayout
         android:id="@+id/webContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

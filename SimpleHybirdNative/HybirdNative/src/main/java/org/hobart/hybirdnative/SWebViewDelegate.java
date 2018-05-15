@@ -20,6 +20,7 @@ import java.util.Map;
  */
 
 public class SWebViewDelegate {
+
     private SimpleWebView webView;
     private Context mContext;
     private SWebChromeClient webChromeClient;
@@ -27,16 +28,14 @@ public class SWebViewDelegate {
     private WebViewCallBack mWebViewCallBack;
     private Map<String, Target> methodCache = new LinkedHashMap<>();
 
+    public SWebViewDelegate(Context context, WebViewCallBack callback, Object... owners) {
+
+        this(context, callback, null, null, owners);
+    }
+
     public SWebViewDelegate(Context context, WebViewCallBack callback, SLoadingView loadingView, SLoadingErrorView emptyView, Object... owners) {
         this.mContext = context;
-        for (Object owner : owners) {
-            for (Method method : owner.getClass().getDeclaredMethods()) {
-                Annotation annotation = method.getAnnotation(INVOKE.class);
-                if (null != annotation) {
-                    methodCache.put(((INVOKE) annotation).value(), new Target(owner, method));
-                }
-            }
-        }
+        setFunctions(owners);
         mWebViewCallBack = callback;
         webView = new SimpleWebView(context);
         webChromeClient = new SWebChromeClient(this);
@@ -46,6 +45,31 @@ public class SWebViewDelegate {
         webView.requestFocusFromTouch();
         webView.setInitialScale(0);
         webView.setVerticalScrollBarEnabled(false);
+    }
+
+    public void setWebViewCallBack(WebViewCallBack callBack) {
+        mWebViewCallBack = callBack;
+    }
+
+    public void setFunctions(Object... owners) {
+        for (Object owner : owners) {
+            for (Method method : owner.getClass().getDeclaredMethods()) {
+                Annotation annotation = method.getAnnotation(INVOKE.class);
+                if (null != annotation) {
+                    methodCache.put(((INVOKE) annotation).value(), new Target(owner, method));
+                }
+            }
+        }
+    }
+
+    public void setLoadingView(SLoadingView loadingView) {
+
+        webViewClient.setLoadingView(loadingView);
+    }
+
+    public void setSLoadingErrorView(SLoadingErrorView errorView) {
+
+        webViewClient.setLoadingErrorView(errorView);
     }
 
     public void setWebChromeClient(WebChromeClient webChromeClient) {

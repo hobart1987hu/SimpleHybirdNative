@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.SslErrorHandler;
@@ -29,13 +30,27 @@ public class SWebViewClient extends WebViewClient {
     private boolean isCurrentlyLoading;
     private boolean mIsError;
     private SLoadingView mLoadingView;
-    private SLoadingErrorView mEmptyView;
+    private SLoadingErrorView mErrorView;
     private String mLoadUrl;
 
-    public SWebViewClient(Context context, SLoadingView loadingView, SLoadingErrorView emptyView) {
+    public void setLoadingView(SLoadingView loadingView) {
+
+        mLoadingView = loadingView;
+    }
+
+    public void setLoadingErrorView(SLoadingErrorView errorView) {
+
+        mErrorView = errorView;
+    }
+
+    public SWebViewClient(Context context) {
+        mContext = context;
+    }
+
+    public SWebViewClient(Context context, SLoadingView loadingView, SLoadingErrorView errorView) {
         mContext = context;
         mLoadingView = loadingView;
-        mEmptyView = emptyView;
+        mErrorView = errorView;
     }
 
     @Override
@@ -81,8 +96,8 @@ public class SWebViewClient extends WebViewClient {
         //TODO: 这边网络问题判断处理
 //        if (mContext != null && !NetworkUtil.isNetworkAvailable(mContext)) {
 //            mIsError = true;
-//            if (null != mEmptyView)
-//                mEmptyView.show();
+//            if (null != mErrorView)
+//                mErrorView.show();
 //            return;
 //        }
 
@@ -93,8 +108,8 @@ public class SWebViewClient extends WebViewClient {
         isCurrentlyLoading = true;
         if (null != mLoadingView)
             mLoadingView.show();
-        if (null != mEmptyView)
-            mEmptyView.hide();
+        if (null != mErrorView)
+            mErrorView.hide();
     }
 
     @Override
@@ -103,15 +118,28 @@ public class SWebViewClient extends WebViewClient {
 
         Log.d(TAG, "----onPageFinished ----");
 
-        if (null != mLoadingView)
-            mLoadingView.hide();
+        if (SWConfig.DEBUG_LOADING) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (null != mLoadingView)
+                        mLoadingView.hide();
+                }
+            }, 1 * 1000);
+        } else {
+            if (null != mLoadingView)
+                mLoadingView.hide();
+        }
+
         if (!isCurrentlyLoading && !url.startsWith("about:")) {
             return;
         }
         isCurrentlyLoading = false;
+
         if (!isWebViewValid(view)) {
             return;
         }
+
         if (!mIsError) {
             statistics();
         }
@@ -130,8 +158,8 @@ public class SWebViewClient extends WebViewClient {
         view.loadUrl("about:blank");
         if (null != mLoadingView)
             mLoadingView.hide();
-        if (null != mEmptyView)
-            mEmptyView.show();
+        if (null != mErrorView)
+            mErrorView.show();
     }
 
     @Override

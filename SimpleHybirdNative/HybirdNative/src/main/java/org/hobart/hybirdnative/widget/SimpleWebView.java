@@ -16,7 +16,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
 
-import org.hobart.hybirdnative.HyBirdConfig;
+import org.hobart.hybirdnative.SWConfig;
 import org.hobart.hybirdnative.util.FileUtils;
 
 import java.io.File;
@@ -120,7 +120,7 @@ public class SimpleWebView extends RelativeLayout {
         mWebView.getSettings().setUseWideViewPort(true);
         mWebView.getSettings().setLoadWithOverviewMode(true);
         // 在 DEBUG 模式下开启调试模式，方便 H5调试，如果无需要删掉
-        if (HyBirdConfig.DEBUG) {
+        if (SWConfig.DEBUG) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 mWebView.setWebContentsDebuggingEnabled(true);
             }
