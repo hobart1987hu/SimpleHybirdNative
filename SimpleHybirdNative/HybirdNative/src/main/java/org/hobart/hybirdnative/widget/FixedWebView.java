@@ -59,6 +59,12 @@ public class FixedWebView extends WebView {
         }
     }
 
+    /**
+     * JS 调用java方法
+     *
+     * @param object
+     * @param name
+     */
     @SuppressLint({"JavascriptInterface", "AddJavascriptInterface"})
     public void jsCallNative(Object object, String name) {
         addJavascriptInterface(object, name);

@@ -1,9 +1,7 @@
 package org.hobart.hybirdnative;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Handler;
@@ -14,6 +12,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import org.hobart.hybirdnative.interceptor.CommonInterceptor;
 import org.hobart.hybirdnative.loading.SLoadingErrorView;
 import org.hobart.hybirdnative.loading.SLoadingView;
 import org.hobart.hybirdnative.widget.FixedWebView;
@@ -32,6 +31,7 @@ public class SWebViewClient extends WebViewClient {
     private SLoadingView mLoadingView;
     private SLoadingErrorView mErrorView;
     private String mLoadUrl;
+    private CommonInterceptor mInterceptor;
 
     public void setLoadingView(SLoadingView loadingView) {
 
@@ -44,13 +44,14 @@ public class SWebViewClient extends WebViewClient {
     }
 
     public SWebViewClient(Context context) {
-        mContext = context;
+        this(context, null, null);
     }
 
     public SWebViewClient(Context context, SLoadingView loadingView, SLoadingErrorView errorView) {
         mContext = context;
         mLoadingView = loadingView;
         mErrorView = errorView;
+        mInterceptor = new CommonInterceptor(context);
     }
 
     @Override
@@ -59,10 +60,7 @@ public class SWebViewClient extends WebViewClient {
         if (!isWebViewValid(view)) {
             return true;
         }
-        if (url.startsWith("tel:")) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mContext.startActivity(intent);
+        if (mInterceptor.interceptorUrl(url)) {
             return true;
         }
         Log.d(TAG, "---shouldOverrideUrlLoading----load url : ->" + url);
@@ -74,10 +72,7 @@ public class SWebViewClient extends WebViewClient {
     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
         if (Build.VERSION.SDK_INT >= 21) {
             final String url = request.getUrl().toString();
-            if (url.startsWith("tel:")) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mContext.startActivity(intent);
+            if (mInterceptor.interceptorUrl(url)) {
                 return true;
             }
             Log.d(TAG, "---shouldOverrideUrlLoading----load url : ->" + url);
