@@ -52,7 +52,13 @@ public class SimpleWebView extends RelativeLayout {
         mWebView = new FixedWebView(getContext());
         addView(mWebView, LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
         intSet();
-        mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            mWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
     }
 
     private void intSet() {
